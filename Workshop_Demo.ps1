@@ -291,8 +291,8 @@ Get-WmiObject –Namespace root –List -Recurse | Measure-Object
 Get-CimInstance -Namespace root/cimv2 -Classname win32_ntlogevent -filter "logfile='security'"
 Get-CimInstance -Namespace root/cimv2 -Classname win32_startupcommand
 Get-CimInstance -Namespace root/cimv2 -Classname win32_quickfixengineering
+Get-CimInstance -Namespace root/cimv2 -ClassName Win32_service
 (Get-CimInstance -Namespace root/cimv2 -ClassName win32_operatingsystem).OSArchitecture
-
 
 $StaticClass = New-Object Management.ManagementClass('root\cimv2', $null, $null)
 $StaticClass.Name = 'Win33_Secret'
@@ -802,3 +802,40 @@ Remove-Item "$env:USERPROFILE\desktop\downloaded_script.ps1"
 Remove-Item "$env:USERPROFILE\desktop\demo_script.ps1"
 
 } # Profiles
+
+
+Function Software{
+Get-PSDrive
+
+Get-ChildItem hklm:\
+
+$keys = (Get-ChildItem HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall).pspath
+
+Get-ItemProperty $keys[0]
+
+foreach($item in $keys){
+ Get-ItemProperty $item| select displayname, displayversion, InstallDate, InstallLocation, Publisher 
+}
+
+} # Software
+
+
+Function Services{
+Get-Service | Select-Object * -First 1
+
+Get-Service | Select-Object * -First 1
+
+Get-CimInstance -Namespace root/cimv2 -ClassName Win32_service  | Select-Object * -First 1
+
+Get-CimInstance Win32_service | where {$_.Started -eq "True"} | Select-Object Name, ProcessId
+
+Get-CimInstance Win32_service | where {$_.Started -eq "True" -and $_.ServiceType -eq "own process"} 
+
+Get-CimInstance Win32_service | where {$_.Started -eq "True" -and $_.ServiceType -eq "Share Process"} 
+
+Get-CimInstance Win32_service | where {$_.Started -eq "True" -and $_.ServiceType -eq "Share Process"} | Group-Object -Property processid | 
+    Sort-Object -Property count |Select-Object Count, Name, @{name='IPs';Expression={$_.group.'name' -join ', '}} | sort processid
+
+
+
+} # Services
