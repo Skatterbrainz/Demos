@@ -802,31 +802,3 @@ Remove-Item "$env:USERPROFILE\desktop\downloaded_script.ps1"
 Remove-Item "$env:USERPROFILE\desktop\demo_script.ps1"
 
 } # Profiles
-
-
-Function DNS{
-
-function Sinkhole-Hosts{
-param([string[]]$domains)
-    #Requires -RunAsAdministrator
-    $file = "C:\Windows\System32\drivers\etc\hosts"
-    $domains
-    foreach($item in $domains){
-        "0.0.0.0       $item" | out-file $file -append
-    } 
-}
-
-function Restore-Hosts{
-    $file = "C:\Windows\System32\drivers\etc\hosts"
-    $hosts = get-content $file
-    remove-item $file
-    foreach($item in $hosts){
-        if($item -like "`#*"){
-            $item | out-file C:\Windows\System32\drivers\etc\hosts -Append      
-        }
-    }
-}
-
-
-}
-
